@@ -31,7 +31,7 @@ static CGFloat const PADDING_Y = 5.0;
 
 @implementation CLTokenView
 
-- (id)initWithToken:(CLToken *)token
+- (instancetype)initWithToken:(CLToken *)token
 			   font:(nullable UIFont *)font
 tokenBackgroundColor:(UIColor *)tokenBackgroundColor
 	 tokenTextColor:(UIColor *)tokenTextColor

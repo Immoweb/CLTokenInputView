@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic, nullable) NSObject <CLTokenViewDelegate> *delegate;
 @property (assign, nonatomic) BOOL selected;
 
-- (id)initWithToken:(CLToken *)token
+- (instancetype)initWithToken:(CLToken *)token
 			   font:(nullable UIFont *)font
 tokenBackgroundColor:(UIColor *)tokenBackgroundColor
 	 tokenTextColor:(UIColor *)tokenTextColor

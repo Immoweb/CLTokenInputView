@@ -10,7 +10,7 @@
 
 @implementation CLToken
 
-- (id)initWithDisplayText:(NSString *)displayText context:(NSObject *)context
+- (instancetype)initWithDisplayText:(NSString *)displayText context:(id)context
 {
     self = [super init];
     if (self) {
@@ -39,7 +39,7 @@
 
 - (NSUInteger)hash
 {
-    return self.displayText.hash + self.context.hash;
+    return self.displayText.hash;
 }
 
 @end
