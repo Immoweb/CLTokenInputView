@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Called when a token has been removed. You should use this opportunity to update your local list of selected items.
  */
 - (void)tokenInputView:(CLTokenInputView *)view didRemoveToken:(CLToken *)token;
-/** 
+/**
  * Called when the user attempts to press the Return key with text partially typed.
  * @return A CLToken for a match (typically the first item in the matching results),
  * or nil if the text shouldn't be accepted.
@@ -76,17 +76,22 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic, nullable) IBOutlet NSObject <CLTokenInputViewDelegate> *delegate;
 /** An optional view that shows up presumably on the first line */
 @property (strong, nonatomic, nullable) UIView *fieldView;
+@property (strong, nonatomic, nullable) UIFont *font;
 /** Option text which can be displayed before the first line (e.g. "To:") */
 @property (copy, nonatomic, nullable) IBInspectable NSString *fieldName;
 /** Color of optional */
 @property (strong, nonatomic, nullable) IBInspectable UIColor *fieldColor;
+@property (strong, nonatomic, nullable) IBInspectable UIColor *tokenBackgroundColor;
+@property (strong, nonatomic, nullable) IBInspectable UIColor *tokenTextColor;
+@property (strong, nonatomic, nullable) IBInspectable UIColor *tokenBackgroundActiveColor;
+@property (strong, nonatomic, nullable) IBInspectable UIColor *tokenTextActiveColor;
 @property (copy, nonatomic, nullable) IBInspectable NSString *placeholderText;
 @property (strong, nonatomic, nullable) UIView *accessoryView;
 @property (assign, nonatomic) IBInspectable UIKeyboardType keyboardType;
 @property (assign, nonatomic) IBInspectable UITextAutocapitalizationType autocapitalizationType;
 @property (assign, nonatomic) IBInspectable UITextAutocorrectionType autocorrectionType;
 @property (assign, nonatomic) IBInspectable UIKeyboardAppearance keyboardAppearance;
-/** 
+/**
  * Optional additional characters to trigger the tokenization process (and call the delegate
  * with `tokenInputView:tokenForText:`
  * @discussion By default this array is empty, as only the Return key will trigger tokenization
@@ -99,7 +104,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, nonatomic) CL_GENERIC_ARRAY(CLToken *) *allTokens;
 @property (readonly, nonatomic, getter = isEditing) BOOL editing;
 @property (readonly, nonatomic) CGFloat textFieldDisplayOffset;
-@property (copy, nonatomic, nullable) NSString *text;
+@property (readonly, nonatomic, nullable) NSString *text;
 
 - (void)addToken:(CLToken *)token;
 - (void)removeToken:(CLToken *)token;
@@ -112,3 +117,4 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+

@@ -10,121 +10,153 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-static CGFloat const PADDING_X = 4.0;
-static CGFloat const PADDING_Y = 2.0;
-
-static NSString *const UNSELECTED_LABEL_FORMAT = @"%@,";
-static NSString *const UNSELECTED_LABEL_NO_COMMA_FORMAT = @"%@";
+static CGFloat const PADDING_X = 10.0;
+static CGFloat const PADDING_Y = 5.0;
 
 
 @interface CLTokenView ()
 
 @property (strong, nonatomic) UIView *backgroundView;
 @property (strong, nonatomic) UILabel *label;
-
-@property (strong, nonatomic) UIView *selectedBackgroundView;
-@property (strong, nonatomic) UILabel *selectedLabel;
+@property (strong, nonatomic) UIButton *removeButton;
 
 @property (copy, nonatomic) NSString *displayText;
+
+@property (strong, nonatomic, nullable) IBInspectable UIColor *tokenBackgroundColor;
+@property (strong, nonatomic, nullable) IBInspectable UIColor *tokenTextColor;
+@property (strong, nonatomic, nullable) IBInspectable UIColor *tokenBackgroundActiveColor;
+@property (strong, nonatomic, nullable) IBInspectable UIColor *tokenTextActiveColor;
 
 @end
 
 @implementation CLTokenView
 
-- (id)initWithToken:(CLToken *)token font:(nullable UIFont *)font
+- (id)initWithToken:(CLToken *)token
+			   font:(nullable UIFont *)font
+tokenBackgroundColor:(UIColor *)tokenBackgroundColor
+	 tokenTextColor:(UIColor *)tokenTextColor
+tokenBackgroundActiveColor:(UIColor *)tokenBackgroundActiveColor
+tokenTextActiveColor:(UIColor *)tokenTextActiveColor;
 {
-    self = [super initWithFrame:CGRectZero];
-    if (self) {
-        UIColor *tintColor = [UIColor colorWithRed:0.0823 green:0.4941 blue:0.9843 alpha:1.0];
-        if ([self respondsToSelector:@selector(tintColor)]) {
-            tintColor = self.tintColor;
-        }
-        self.label = [[UILabel alloc] initWithFrame:CGRectMake(PADDING_X, PADDING_Y, 0, 0)];
-        if (font) {
-            self.label.font = font;
-        }
-        self.label.textColor = tintColor;
-        self.label.backgroundColor = [UIColor clearColor];
-        [self addSubview:self.label];
+	self = [super initWithFrame:CGRectZero];
+	if (self) {
+		if (tokenTextColor != nil) {
+			self.tokenTextColor = tokenTextColor;
+		} else {
+			self.tokenTextColor = [UIColor whiteColor];
+		}
 
-        self.selectedBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
-        self.selectedBackgroundView.backgroundColor = tintColor;
-        self.selectedBackgroundView.layer.cornerRadius = 3.0;
-        [self addSubview:self.selectedBackgroundView];
-        self.selectedBackgroundView.hidden = YES;
+		if (tokenTextActiveColor != nil) {
+			self.tokenTextActiveColor = tokenTextActiveColor;
+		} else {
+			self.tokenTextActiveColor = [UIColor whiteColor];
+		}
 
-        self.selectedLabel = [[UILabel alloc] initWithFrame:CGRectMake(PADDING_X, PADDING_Y, 0, 0)];
-        self.selectedLabel.font = self.label.font;
-        self.selectedLabel.textColor = [UIColor whiteColor];
-        self.selectedLabel.backgroundColor = [UIColor clearColor];
-        [self addSubview:self.selectedLabel];
-        self.selectedLabel.hidden = YES;
+		if (tokenBackgroundColor != nil) {
+			self.tokenBackgroundColor = tokenBackgroundColor;
+		} else {
+			self.tokenBackgroundColor = [UIColor colorWithRed:0.24 green:0.42 blue:0.66 alpha:1.0];
+		}
 
-        self.displayText = token.displayText;
+		if (tokenBackgroundActiveColor != nil) {
+			self.tokenBackgroundActiveColor = tokenBackgroundActiveColor;
+		} else {
+			self.tokenBackgroundActiveColor = [UIColor colorWithRed:0.14 green:0.32 blue:0.8 alpha:1.0];
+		}
 
-        self.hideUnselectedComma = NO;
+		self.backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+		self.backgroundView.backgroundColor = self.tokenBackgroundColor;
+		self.backgroundView.layer.cornerRadius = 4.0;
+		self.backgroundView.layer.masksToBounds = YES;
+		[self addSubview:self.backgroundView];
 
-        [self updateLabelAttributedText];
-        self.selectedLabel.text = token.displayText;
+		self.label = [[UILabel alloc] initWithFrame:CGRectMake(PADDING_X, PADDING_Y, 0, 0)];
+		if (font) {
+			self.label.font = font;
+		}
+		self.label.textColor = self.tokenTextColor;
+		self.label.backgroundColor = [UIColor clearColor];
+		[self addSubview:self.label];
 
-        // Listen for taps
-        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
-        [self addGestureRecognizer:tapRecognizer];
+		self.removeButton = [UIButton buttonWithType:UIButtonTypeSystem];
+		[self.removeButton setImage:[UIImage imageNamed:@"Close"
+											   inBundle:[NSBundle bundleForClass:self.class]
+						  compatibleWithTraitCollection:nil]
+						   forState:UIControlStateNormal];
+		self.removeButton.tintColor = self.tokenTextColor;
+		[self addSubview:self.removeButton];
 
-        [self setNeedsLayout];
+		[self setUpConstraints];
 
-    }
-    return self;
+		self.displayText = token.displayText;
+		self.label.text = self.displayText;
+
+		[self.removeButton addTarget:self
+							  action:@selector(removeButtonClicked)
+					forControlEvents:UIControlEventTouchUpInside];
+
+		// Listen for taps
+		UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
+		[self addGestureRecognizer:tapRecognizer];
+
+		[self setNeedsLayout];
+
+	}
+	return self;
 }
 
-#pragma mark - Size Measurements
-
-- (CGSize)intrinsicContentSize
+- (void)setUpConstraints
 {
-    CGSize labelIntrinsicSize = self.selectedLabel.intrinsicContentSize;
-    return CGSizeMake(labelIntrinsicSize.width+(2.0*PADDING_X), labelIntrinsicSize.height+(2.0*PADDING_Y));
-}
+	self.translatesAutoresizingMaskIntoConstraints = NO;
+	self.label.translatesAutoresizingMaskIntoConstraints = NO;
+	self.backgroundView.translatesAutoresizingMaskIntoConstraints = NO;
+	self.removeButton.translatesAutoresizingMaskIntoConstraints = NO;
 
-- (CGSize)sizeThatFits:(CGSize)size
-{
-    CGSize fittingSize = CGSizeMake(size.width-(2.0*PADDING_X), size.height-(2.0*PADDING_Y));
-    CGSize labelSize = [self.selectedLabel sizeThatFits:fittingSize];
-    return CGSizeMake(labelSize.width+(2.0*PADDING_X), labelSize.height+(2.0*PADDING_Y));
-}
+	[self addConstraints:[NSLayoutConstraint
+						  constraintsWithVisualFormat:@"H:|[background]|"
+						  options:0
+						  metrics:nil
+						  views:@{@"background": self.backgroundView}]];
 
+	[self addConstraints:[NSLayoutConstraint
+						  constraintsWithVisualFormat:@"V:|[background]|"
+						  options:0
+						  metrics:nil
+						  views:@{@"background": self.backgroundView}]];
 
-#pragma mark - Tinting
+	[self addConstraints:[NSLayoutConstraint
+						  constraintsWithVisualFormat:@"H:|-(padding)-[label][button(buttonWidth)]|"
+						  options:0
+						  metrics:@{@"padding": @(PADDING_X), @"buttonWidth": @((PADDING_X * 2) + 10)}
+						  views:@{@"label": self.label, @"button": self.removeButton}]];
 
+	[self addConstraints:[NSLayoutConstraint
+						  constraintsWithVisualFormat:@"V:|-(padding)-[label]-(padding)-|"
+						  options:0
+						  metrics:@{@"padding": @(PADDING_Y)}
+						  views:@{@"label": self.label}]];
 
-- (void)setTintColor:(UIColor *)tintColor
-{
-    if ([UIView instancesRespondToSelector:@selector(setTintColor:)]) {
-        super.tintColor = tintColor;
-    }
-    self.label.textColor = tintColor;
-    self.selectedBackgroundView.backgroundColor = tintColor;
-    [self updateLabelAttributedText];
-}
-
-
-#pragma mark - Hide Unselected Comma
-
-
-- (void)setHideUnselectedComma:(BOOL)hideUnselectedComma
-{
-    if (_hideUnselectedComma == hideUnselectedComma) {
-        return;
-    }
-    _hideUnselectedComma = hideUnselectedComma;
-    [self updateLabelAttributedText];
+	[self addConstraint:[NSLayoutConstraint
+						 constraintWithItem:self.removeButton
+						 attribute:NSLayoutAttributeCenterY
+						 relatedBy:NSLayoutRelationEqual
+						 toItem:self
+						 attribute:NSLayoutAttributeCenterY
+						 multiplier:1
+						 constant:0]];
 }
 
 
 #pragma mark - Taps
 
+- (void)removeButtonClicked
+{
+	[self.delegate tokenViewDidRequestDelete:self replaceWithText:nil];
+}
+
 -(void)handleTapGestureRecognizer:(id)sender
 {
-    [self.delegate tokenViewDidRequestSelection:self];
+	[self.delegate tokenViewDidRequestSelection:self];
 }
 
 
@@ -132,114 +164,47 @@ static NSString *const UNSELECTED_LABEL_NO_COMMA_FORMAT = @"%@";
 
 - (void)setSelected:(BOOL)selected
 {
-    [self setSelected:selected animated:NO];
+	[self setSelected:selected animated:NO];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-    if (_selected == selected) {
-        return;
-    }
-    _selected = selected;
+	if (_selected == selected) {
+		return;
+	}
+	_selected = selected;
 
-    if (selected && !self.isFirstResponder) {
-        [self becomeFirstResponder];
-    } else if (!selected && self.isFirstResponder) {
-        [self resignFirstResponder];
-    }
-    CGFloat selectedAlpha = (_selected ? 1.0 : 0.0);
-    if (animated) {
-        if (_selected) {
-            self.selectedBackgroundView.alpha = 0.0;
-            self.selectedBackgroundView.hidden = NO;
-            self.selectedLabel.alpha = 0.0;
-            self.selectedLabel.hidden = NO;
-        }
-        [UIView animateWithDuration:0.25 animations:^{
-            self.selectedBackgroundView.alpha = selectedAlpha;
-            self.selectedLabel.alpha = selectedAlpha;
-        } completion:^(BOOL finished) {
-            if (!_selected) {
-                self.selectedBackgroundView.hidden = YES;
-                self.selectedLabel.hidden = YES;
-            }
-        }];
-    } else {
-        self.selectedBackgroundView.hidden = !_selected;
-        self.selectedLabel.hidden = !_selected;
-    }
+	if (selected && !self.isFirstResponder) {
+		[self becomeFirstResponder];
+	} else if (!selected && self.isFirstResponder) {
+		[self resignFirstResponder];
+	}
+
+	if (selected) {
+		self.backgroundView.backgroundColor = self.tokenBackgroundActiveColor;
+		self.label.textColor = self.tokenTextActiveColor;
+	} else {
+		self.backgroundView.backgroundColor = self.tokenBackgroundColor;
+		self.label.textColor = self.tokenTextColor;
+	}
 }
-
-
-#pragma mark - Attributed Text
-
-
-- (void)updateLabelAttributedText
-{
-    // Configure for the token, unselected shows "[displayText]," and selected is "[displayText]"
-    NSString *format = UNSELECTED_LABEL_FORMAT;
-    if (self.hideUnselectedComma) {
-        format = UNSELECTED_LABEL_NO_COMMA_FORMAT;
-    }
-    NSString *labelString = [NSString stringWithFormat:format, self.displayText];
-    NSMutableAttributedString *attrString =
-    [[NSMutableAttributedString alloc] initWithString:labelString
-                                           attributes:@{NSFontAttributeName : self.label.font,
-                                                        NSForegroundColorAttributeName : [UIColor lightGrayColor]}];
-    NSRange tintRange = [labelString rangeOfString:self.displayText];
-    // Make the name part the system tint color
-    UIColor *tintColor = self.selectedBackgroundView.backgroundColor;
-    if ([UIView instancesRespondToSelector:@selector(tintColor)]) {
-        tintColor = self.tintColor;
-    }
-    [attrString setAttributes:@{NSForegroundColorAttributeName : tintColor}
-                        range:tintRange];
-    self.label.attributedText = attrString;
-}
-
-
-#pragma mark - Laying out
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-
-    CGRect bounds = self.bounds;
-
-    self.backgroundView.frame = bounds;
-    self.selectedBackgroundView.frame = bounds;
-
-    CGRect labelFrame = CGRectInset(bounds, PADDING_X, PADDING_Y);
-    self.selectedLabel.frame = labelFrame;
-    labelFrame.size.width += PADDING_X*2.0;
-    self.label.frame = labelFrame;
-}
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 
 #pragma mark - UIKeyInput protocol
 
 - (BOOL)hasText
 {
-    return YES;
+	return YES;
 }
 
 - (void)insertText:(NSString *)text
 {
-    [self.delegate tokenViewDidRequestDelete:self replaceWithText:text];
+	[self.delegate tokenViewDidRequestDelete:self replaceWithText:text];
 }
 
 - (void)deleteBackward
 {
-    [self.delegate tokenViewDidRequestDelete:self replaceWithText:nil];
+	[self.delegate tokenViewDidRequestDelete:self replaceWithText:nil];
 }
 
 
@@ -249,7 +214,7 @@ static NSString *const UNSELECTED_LABEL_NO_COMMA_FORMAT = @"%@";
 // See: https://github.com/clusterinc/CLTokenInputView/issues/2
 - (UITextAutocorrectionType)autocorrectionType
 {
-    return UITextAutocorrectionTypeNo;
+	return UITextAutocorrectionTypeNo;
 }
 
 
@@ -257,23 +222,24 @@ static NSString *const UNSELECTED_LABEL_NO_COMMA_FORMAT = @"%@";
 
 -(BOOL)canBecomeFirstResponder
 {
-    return YES;
+	return YES;
 }
 
 
 -(BOOL)resignFirstResponder
 {
-    BOOL didResignFirstResponder = [super resignFirstResponder];
-    [self setSelected:NO animated:NO];
-    return didResignFirstResponder;
+	BOOL didResignFirstResponder = [super resignFirstResponder];
+	[self setSelected:NO animated:NO];
+	return didResignFirstResponder;
 }
 
 -(BOOL)becomeFirstResponder
 {
-    BOOL didBecomeFirstResponder = [super becomeFirstResponder];
-    [self setSelected:YES animated:NO];
-    return didBecomeFirstResponder;
+	BOOL didBecomeFirstResponder = [super becomeFirstResponder];
+	[self setSelected:YES animated:NO];
+	return didBecomeFirstResponder;
 }
 
 
 @end
+

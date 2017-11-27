@@ -53,6 +53,11 @@
     self.tokenInputView.placeholderText = @"Enter a name";
     self.tokenInputView.accessoryView = [self contactAddButton];
     self.tokenInputView.drawBottomBorder = YES;
+	self.tokenInputView.font = [UIFont systemFontOfSize:16];
+	self.tokenInputView.tokenBackgroundColor = [UIColor colorWithRed:0.24 green:0.42 blue:0.66 alpha:1.0];
+	self.tokenInputView.tokenTextColor = [UIColor whiteColor];
+	self.tokenInputView.tokenBackgroundActiveColor = [UIColor colorWithRed:0.14 green:0.32 blue:0.8 alpha:1.0];
+	self.tokenInputView.tokenTextActiveColor = [UIColor whiteColor];
     
     self.secondTokenInputView.fieldName = NSLocalizedString(@"Cc:", nil);
     self.secondTokenInputView.drawBottomBorder = YES;
