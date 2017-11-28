@@ -78,9 +78,20 @@ tokenTextActiveColor:(UIColor *)tokenTextActiveColor;
 		self.label.backgroundColor = [UIColor clearColor];
 		[self addSubview:self.label];
 
+		NSBundle *bundle = [NSBundle bundleForClass:self.class];
+		NSString *podBundlePath = [bundle pathForResource:@"CLTokenInputView" ofType:@"bundle"];
+
+		if (podBundlePath) {
+			NSBundle *resourcesBundle = [[NSBundle alloc] initWithPath:podBundlePath];
+
+			if (resourcesBundle) {
+				bundle = resourcesBundle;
+			}
+		}
+
 		self.removeButton = [UIButton buttonWithType:UIButtonTypeSystem];
 		[self.removeButton setImage:[UIImage imageNamed:@"Close"
-											   inBundle:[NSBundle bundleForClass:self.class]
+											   inBundle:bundle
 						  compatibleWithTraitCollection:nil]
 						   forState:UIControlStateNormal];
 		self.removeButton.tintColor = self.tokenTextColor;
