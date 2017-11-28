@@ -288,7 +288,7 @@ static CGFloat const FIELD_MARGIN_X = 4.0; // Note: Same as CLTokenView.PADDING_
 	if (self.tokens.count > 0) {
 		self.textField.placeholder = nil;
 	} else {
-		self.textField.placeholder = self.placeholderText;
+		self.textField.placeholder = self.textFieldPlaceholder;
 	}
 }
 
@@ -526,12 +526,12 @@ static CGFloat const FIELD_MARGIN_X = 4.0; // Note: Same as CLTokenView.PADDING_
 	[self repositionViews];
 }
 
-- (void)setPlaceholderText:(NSString *)placeholderText
+- (void)setTextFieldPlaceholder:(NSString *)placeholderText
 {
-	if (_placeholderText == placeholderText) {
+	if (_textFieldPlaceholder == placeholderText) {
 		return;
 	}
-	_placeholderText = placeholderText;
+	_textFieldPlaceholder = placeholderText;
 	[self updatePlaceholderTextVisibility];
 }
 

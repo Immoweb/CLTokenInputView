@@ -71,6 +71,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+IB_DESIGNABLE
+
 @interface CLTokenInputView : UIView
 
 @property (weak, nonatomic, nullable) IBOutlet NSObject <CLTokenInputViewDelegate> *delegate;
@@ -85,7 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic, nullable) IBInspectable UIColor *tokenTextColor;
 @property (strong, nonatomic, nullable) IBInspectable UIColor *tokenBackgroundActiveColor;
 @property (strong, nonatomic, nullable) IBInspectable UIColor *tokenTextActiveColor;
-@property (copy, nonatomic, nullable) IBInspectable NSString *placeholderText;
+@property (copy, nonatomic, nullable) IBInspectable NSString *textFieldPlaceholder;
 @property (strong, nonatomic, nullable) UIView *accessoryView;
 @property (assign, nonatomic) IBInspectable UIKeyboardType keyboardType;
 @property (assign, nonatomic) IBInspectable UITextAutocapitalizationType autocapitalizationType;
