@@ -395,6 +395,11 @@ static CGFloat const FIELD_MARGIN_X = 4.0; // Note: Same as CLTokenView.PADDING_
 	self.textField.keyboardAppearance = _keyboardAppearance;
 }
 
+- (void)setReturnKeyType:(UIReturnKeyType)returnKeyType {
+	_returnKeyType = returnKeyType;
+	self.textField.returnKeyType = _returnKeyType;
+}
+
 
 #pragma mark - Measurements (text field offset, etc.)
 
