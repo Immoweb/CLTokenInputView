@@ -227,7 +227,7 @@ static CGFloat const FIELD_MARGIN_X = 4.0; // Note: Same as CLTokenView.PADDING_
 
 	// Position token views
 	CGRect tokenRect = CGRectNull;
-	for (UIView *tokenView in self.tokenViews) {
+	for (CLTokenView *tokenView in self.tokenViews) {
 		tokenRect = tokenView.frame;
 
 		CGFloat tokenBoundary = isOnFirstLine ? firstLineRightBoundary : rightBoundary;
@@ -238,6 +238,8 @@ static CGFloat const FIELD_MARGIN_X = 4.0; // Note: Same as CLTokenView.PADDING_
 			totalHeight += STANDARD_ROW_HEIGHT;
 			isOnFirstLine = NO;
 		}
+
+		tokenView.maxWidth = tokenBoundary;
 
 		tokenRect.origin.x = curX;
 		// Center our tokenView vertially within STANDARD_ROW_HEIGHT

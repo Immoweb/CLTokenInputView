@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (weak, nonatomic, nullable) NSObject <CLTokenViewDelegate> *delegate;
 @property (assign, nonatomic) BOOL selected;
+@property (assign, nonatomic) CGFloat maxWidth;
 
 - (instancetype)initWithToken:(CLToken *)token
 			   font:(nullable UIFont *)font

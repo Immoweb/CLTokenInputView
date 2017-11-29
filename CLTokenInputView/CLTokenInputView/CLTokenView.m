@@ -27,6 +27,8 @@ static CGFloat const PADDING_Y = 5.0;
 @property (strong, nonatomic, nullable) IBInspectable UIColor *tokenBackgroundActiveColor;
 @property (strong, nonatomic, nullable) IBInspectable UIColor *tokenTextActiveColor;
 
+@property (strong, nonatomic, nullable) NSLayoutConstraint *maxWidthConstraint;
+
 @end
 
 @implementation CLTokenView
@@ -75,6 +77,7 @@ tokenTextActiveColor:(UIColor *)tokenTextActiveColor;
 			self.label.font = font;
 		}
 		self.label.textColor = self.tokenTextColor;
+		self.label.lineBreakMode = NSLineBreakByTruncatingMiddle;
 		self.label.backgroundColor = [UIColor clearColor];
 		[self addSubview:self.label];
 
@@ -155,6 +158,22 @@ tokenTextActiveColor:(UIColor *)tokenTextActiveColor;
 						 attribute:NSLayoutAttributeCenterY
 						 multiplier:1
 						 constant:0]];
+
+	self.maxWidthConstraint = [NSLayoutConstraint
+							   constraintWithItem:self
+							   attribute:NSLayoutAttributeWidth
+							   relatedBy:NSLayoutRelationLessThanOrEqual
+							   toItem:nil
+							   attribute:NSLayoutAttributeNotAnAttribute
+							   multiplier:1
+							   constant:100];
+
+	[self addConstraint:self.maxWidthConstraint];
+}
+
+- (void)setMaxWidth:(CGFloat)maxWidth {
+	_maxWidth = maxWidth;
+	self.maxWidthConstraint.constant = _maxWidth;
 }
 
 
