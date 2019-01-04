@@ -217,6 +217,8 @@ tokenTextActiveColor:(UIColor *)tokenTextActiveColor;
 		self.backgroundView.backgroundColor = self.tokenBackgroundColor;
 		self.label.textColor = self.tokenTextColor;
 	}
+
+	self.removeButton.tintColor = self.label.textColor;
 }
 
 
