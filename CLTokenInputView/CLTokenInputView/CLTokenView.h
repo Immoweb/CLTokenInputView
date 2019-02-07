@@ -36,6 +36,7 @@ tokenBackgroundActiveColor:(UIColor *)tokenBackgroundActiveColor
 tokenTextActiveColor:(UIColor *)tokenTextActiveColor;
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated;
+- (void)blink;
 
 @end
 

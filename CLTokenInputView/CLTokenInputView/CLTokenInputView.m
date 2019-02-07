@@ -179,6 +179,22 @@ static CGFloat const FIELD_MARGIN_X = 4.0; // Note: Same as CLTokenView.PADDING_
 	return token;
 }
 
+- (void)blinkToken:(CLToken *)token {
+	NSInteger index = [self.tokens indexOfObject:token];
+	if (index == NSNotFound) {
+		return;
+	}
+	[self blinkTokenAtIndex:index];
+}
+
+- (void)blinkTokenAtIndex:(NSInteger)index {
+	if (index == NSNotFound) {
+		return;
+	}
+	CLTokenView *tokenView = self.tokenViews[index];
+	[tokenView blink];
+}
+
 
 #pragma mark - Updating/Repositioning Views
 

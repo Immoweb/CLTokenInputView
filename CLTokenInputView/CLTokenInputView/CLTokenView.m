@@ -221,6 +221,27 @@ tokenTextActiveColor:(UIColor *)tokenTextActiveColor;
 	self.removeButton.tintColor = self.label.textColor;
 }
 
+- (void)blink {
+	NSTimeInterval duration = 0.8;
+	[UIView animateKeyframesWithDuration:duration
+								   delay:0
+								 options:UIViewKeyframeAnimationOptionBeginFromCurrentState
+							  animations:^{
+								  CGFloat frames = 4;
+
+								  for (CGFloat frame = 0; frame < frames; frame++) {
+									  [UIView addKeyframeWithRelativeStartTime:frame/frames relativeDuration:1.0/frames animations:^{
+										  if ((NSInteger)frame % 2 == 0) {
+											  self.alpha = 0;
+										  } else {
+											  self.alpha = 1;
+										  }
+									  }];
+								  }
+							  }
+							  completion:nil];
+}
+
 
 #pragma mark - UIKeyInput protocol
 

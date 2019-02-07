@@ -112,6 +112,7 @@ IB_DESIGNABLE
 - (void)addToken:(CLToken *)token;
 - (void)removeToken:(CLToken *)token;
 - (nullable CLToken *)tokenizeTextfieldText;
+- (void)blinkToken:(CLToken *)token;
 
 // Editing
 - (void)beginEditing;
