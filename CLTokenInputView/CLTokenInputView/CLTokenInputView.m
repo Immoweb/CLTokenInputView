@@ -150,6 +150,9 @@ static CGFloat const FIELD_MARGIN_X = 4.0; // Note: Same as CLTokenView.PADDING_
 	[tokenView removeFromSuperview];
 	[self.tokenViews removeObjectAtIndex:index];
 	CLToken *removedToken = self.tokens[index];
+	if ([self.delegate respondsToSelector:@selector(tokenInputView:willRemoveToken:)]) {
+		[self.delegate tokenInputView:self willRemoveToken:removedToken];
+	}
 	[self.tokens removeObjectAtIndex:index];
 	if ([self.delegate respondsToSelector:@selector(tokenInputView:didRemoveToken:)]) {
 		[self.delegate tokenInputView:self didRemoveToken:removedToken];

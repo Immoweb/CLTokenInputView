@@ -53,6 +53,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)tokenInputView:(CLTokenInputView *)view didAddToken:(CLToken *)token;
 /**
+ * Called when a token will be removed. You should use this opportunity to update your local list of selected items.
+ */
+- (void)tokenInputView:(CLTokenInputView *)view willRemoveToken:(CLToken *)token;
+/**
  * Called when a token has been removed. You should use this opportunity to update your local list of selected items.
  */
 - (void)tokenInputView:(CLTokenInputView *)view didRemoveToken:(CLToken *)token;
