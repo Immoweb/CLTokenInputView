@@ -34,11 +34,11 @@ static CGFloat const PADDING_Y = 5.0;
 @implementation CLTokenView
 
 - (instancetype)initWithToken:(CLToken *)token
-			   font:(nullable UIFont *)font
-tokenBackgroundColor:(UIColor *)tokenBackgroundColor
-	 tokenTextColor:(UIColor *)tokenTextColor
-tokenBackgroundActiveColor:(UIColor *)tokenBackgroundActiveColor
-tokenTextActiveColor:(UIColor *)tokenTextActiveColor;
+						 font:(nullable UIFont *)font
+		 tokenBackgroundColor:(UIColor *)tokenBackgroundColor
+			   tokenTextColor:(UIColor *)tokenTextColor
+   tokenBackgroundActiveColor:(UIColor *)tokenBackgroundActiveColor
+		 tokenTextActiveColor:(UIColor *)tokenTextActiveColor;
 {
 	self = [super initWithFrame:CGRectZero];
 	if (self) {
@@ -291,6 +291,26 @@ tokenTextActiveColor:(UIColor *)tokenTextActiveColor;
 	BOOL didBecomeFirstResponder = [super becomeFirstResponder];
 	[self setSelected:YES animated:NO];
 	return didBecomeFirstResponder;
+}
+
+- (BOOL)isAccessibilityElement
+{
+	return true;
+}
+
+- (NSString *)accessibilityLabel
+{
+	return self.displayText;
+}
+
+- (NSArray<UIAccessibilityCustomAction *> *)accessibilityCustomActions
+{
+	UIAccessibilityCustomAction *action = [[UIAccessibilityCustomAction alloc]
+										   initWithName:NSLocalizedString(@"delete", "")
+										   target:self
+										   selector:@selector(removeButtonClicked)];
+
+	return @[action];
 }
 
 
